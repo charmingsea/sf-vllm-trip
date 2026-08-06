@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>旧金山 vLLM 大会 · 旅行清单</title>
+<style>
+:root{
+  --bg:#0f172a; --card:#ffffff; --ink:#1e293b; --sub:#64748b;
+  --line:#e2e8f0; --brand:#2563eb; --brand-soft:#dbeafe;
+  --ok:#16a34a; --ok-soft:#dcfce7; --warn:#d97706; --warn-soft:#fef3c7;
+  --tab-bg:#1e293b;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--ink); min-height:100vh;
+}
+.app{max-width:560px; margin:0 auto; padding:0 0 40px;}
+
+/* ---------- header ---------- */
+header{
+  position:sticky; top:0; z-index:30;
+  background:linear-gradient(160deg,#0f172a 0%,#1e3a8a 100%);
+  color:#fff; padding:16px 16px 14px; border-radius:0 0 20px 20px;
+  box-shadow:0 4px 18px rgba(0,0,0,.35);
+}
+.logo{display:flex; align-items:center; gap:10px;}
+.logo-badge{
+  width:40px;height:40px;border-radius:12px;flex:none;
+  background:linear-gradient(135deg,#60a5fa,#2563eb);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800; font-size:18px; color:#fff;
+}
+.logo h1{margin:0; font-size:17px; letter-spacing:.3px;}
+.logo .sub{margin-top:2px; font-size:12px; color:#bfdbfe;}
+.progress-wrap{margin-top:12px;}
+.progress-row{display:flex; justify-content:space-between; font-size:12px; color:#dbeafe; margin-bottom:5px;}
+.progress-bar{height:8px; background:rgba(255,255,255,.18); border-radius:99px; overflow:hidden;}
+.progress-fill{height:100%; width:0%; background:linear-gradient(90deg,#4ade80,#22d3ee); border-radius:99px; transition:width .3s;}
+.date-strip{
+  display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:2px;
+  scrollbar-width:none;
+}
+.date-strip::-webkit-scrollbar{display:none;}
+.date-chip{
+  flex:none; font-size:11px; padding:5px 9px; border-radius:99px;
+  background:rgba(255,255,255,.12); color:#e0f2fe; white-space:nowrap;
+}
+.date-chip.hl{background:#fbbf24; color:#0f172a; font-weight:700;}
+.date-chip.travel{background:rgba(255,255,255,.22);}
+
+/* ---------- nav tabs ---------- */
+.tabs{
+  position:sticky; top:112px; z-index:20; display:flex; gap:6px;
+  padding:10px 12px; background:var(--bg); overflow-x:auto; scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex:none; border:1px solid rgba(255,255,255,.14); color:#cbd5e1;
+  background:rgba(255,255,255,.05); font-size:13px; padding:7px 12px;
+  border-radius:99px; cursor:pointer; transition:all .15s;
+}
+.tab.active{background:#2563eb; border-color:#2563eb; color:#fff; font-weight:600;}
+.tab .n{
+  display:inline-block; min-width:18px; text-align:center; margin-left:4px;
+  background:rgba(255,255,255,.16); border-radius:99px; font-size:11px; line-height:18px;
+}
+.tab.active .n{background:rgba(255,255,255,.28);}
+
+/* ---------- cards & sections ---------- */
+.panel{padding:12px 14px;}
+.card{
+  background:var(--card); border-radius:16px; padding:14px;
+  margin-bottom:12px; box-shadow:0 1px 4px rgba(15,23,42,.10);
+}
+.section-title{
+  font-size:14px; font-weight:700; margin:16px 4px 8px; color:#e2e8f0;
+  display:flex; align-items:center; gap:6px;
+}
+.section-title::before{content:""; width:4px; height:14px; background:#3b82f6; border-radius:2px;}
+
+/* filter row */
+.filters{display:flex; gap:6px; margin:2px 0 12px;}
+.fbtn{
+  flex:1; font-size:12px; padding:7px 0; border-radius:10px; text-align:center;
+  background:rgba(255,255,255,.07); color:#cbd5e1; cursor:pointer; border:none;
+}
+.fbtn.active{background:#2563eb; color:#fff;}
+
+/* item rows */
+.item{
+  display:flex; align-items:flex-start; gap:10px; padding:11px 4px;
+  border-bottom:1px solid var(--line); position:relative;
+}
+.item:last-child{border-bottom:none;}
+.box{
+  flex:none; width:22px; height:22px; margin-top:1px; border-radius:7px;
+  border:2px solid #94a3b8; cursor:pointer; transition:all .15s;
+  display:flex; align-items:center; justify-content:center;
+}
+.box.on{background:var(--ok); border-color:var(--ok);}
+.box.on::after{content:"✓"; color:#fff; font-size:14px; font-weight:800;}
+.item-body{flex:1; min-width:0;}
+.item-text{font-size:14px; line-height:1.4; word-break:break-word;}
+.item.done .item-text{color:#94a3b8; text-decoration:line-through;}
+.item-note{font-size:12px; color:var(--sub); margin-top:3px; word-break:break-word;}
+.meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.tag{
+  font-size:11px; padding:2px 8px; border-radius:99px; background:var(--brand-soft); color:#1d4ed8;
+}
+.tag.me{background:var(--ok-soft); color:#15803d;}
+.tag.other{background:#f1f5f9; color:#475569;}
+.tag.both{background:#ede9fe; color:#6d28d9;}
+.item-ops{display:flex; gap:2px; flex:none;}
+.op{
+  border:none; background:transparent; color:var(--sub); font-size:12px;
+  padding:4px 6px; cursor:pointer; border-radius:8px;
+}
+.op:hover{background:#f1f5f9;}
+.empty{padding:24px 0; text-align:center; color:var(--sub); font-size:13px;}
+
+/* quick add */
+.add-form{display:flex; flex-direction:column; gap:8px;}
+.add-row{display:flex; gap:8px;}
+.add-row input, .add-row select{
+  flex:1; min-width:0; border:1px solid var(--line); border-radius:10px;
+  padding:10px 12px; font-size:14px; font-family:inherit; color:var(--ink); background:#fff;
+}
+.add-row input{flex:3;}
+.add-row select{flex:1;}
+.add-form input.note-input{flex:1;}
+.add-row.triple input,.add-row.triple select{flex:1;}
+.add-row.triple input:first-child{flex:1.6;}
+.tag.sub{background:#fef3c7; color:#b45309;}
+.tag.daychip{background:#e0f2fe; color:#0369a1;}
+.tag.hertag{background:#fce7f3; color:#be185d;}
+.log-item{display:flex; gap:10px; padding:10px 2px; border-bottom:1px solid var(--line); align-items:flex-start;}
+.log-item:last-child{border-bottom:none;}
+.log-badge{
+  flex:none; min-width:32px; text-align:center; font-size:11px; font-weight:700;
+  border-radius:99px; padding:3px 8px; margin-top:1px;
+}
+.log-badge.me{background:var(--brand-soft); color:#1d4ed8;}
+.log-badge.her{background:#fce7f3; color:#be185d;}
+.log-body{flex:1; min-width:0;}
+.log-text{font-size:13px; line-height:1.45; word-break:break-word;}
+.log-text b{font-weight:700;}
+.log-time{font-size:11px; color:var(--sub); margin-top:2px;}
+.day-selector{
+  display:flex; gap:6px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none;
+}
+.day-selector::-webkit-scrollbar{display:none;}
+.dbtn{
+  flex:none; border:1px solid rgba(255,255,255,.16); color:#cbd5e1;
+  background:rgba(255,255,255,.06); font-size:12px; padding:6px 10px;
+  border-radius:99px; cursor:pointer;
+}
+.dbtn.active{background:#22d3ee; border-color:#22d3ee; color:#0f172a; font-weight:700;}
+.day-tip{font-size:11px; color:#94a3b8; font-weight:400; margin-left:6px;}
+.hint-note{
+  background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.25);
+  color:#bfdbfe; border-radius:12px; font-size:12px; line-height:1.6;
+  padding:9px 12px; margin-bottom:10px;
+}
+.btn{
+  border:none; border-radius:12px; padding:11px 16px; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .15s;
+}
+.btn-primary{background:var(--brand); color:#fff;}
+.btn-primary:active{transform:scale(.98);}
+.btn-ghost{background:#f1f5f9; color:#334155;}
+
+/* trip overview */
+.info-item{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); align-items:flex-start;}
+.info-item:last-child{border-bottom:none;}
+.info-label{flex:none; width:74px; font-size:12px; color:var(--sub); padding-top:2px;}
+.info-value{flex:1; font-size:13px; line-height:1.5; word-break:break-word;}
+.editable:hover{background:#f8fafc; cursor:pointer;}
+.link{color:var(--brand); text-decoration:none; word-break:break-all;}
+
+/* schedule */
+.sched-day{margin-bottom:10px;}
+.sched-day h4{margin:0 0 6px; font-size:13px; color:#334155;}
+.sched-day .badge{font-size:11px; background:var(--brand-soft); color:#1d4ed8; border-radius:6px; padding:1px 6px; margin-left:4px;}
+.sched-item{font-size:13px; color:var(--sub); padding:3px 0 3px 10px; border-left:2px solid var(--line); margin-left:4px;}
+.sched-item b{color:var(--ink); font-weight:600;}
+
+/* sync sheet */
+.sheet-mask{
+  position:fixed; inset:0; background:rgba(2,6,23,.55); z-index:50; display:none;
+  align-items:flex-end; justify-content:center;
+}
+.sheet{
+  background:#fff; width:100%; max-width:560px; border-radius:20px 20px 0 0;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom)); max-height:88vh; overflow-y:auto;
+}
+.sheet h3{margin:0 0 12px; font-size:16px;}
+.sheet .hint{font-size:12px; color:var(--sub); margin-bottom:10px; line-height:1.6;}
+.sheet textarea{
+  width:100%; min-height:88px; border:1px solid var(--line); border-radius:10px;
+  padding:10px; font-size:12px; font-family:ui-monospace,Menlo,monospace; resize:vertical;
+}
+.sheet .btn-row{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+.sheet .btn{flex:1; min-width:120px;}
+.sync-result{margin-top:10px; font-size:13px; border-radius:10px; padding:10px; display:none;}
+.sync-result.ok{display:block; background:var(--ok-soft); color:#15803d;}
+.sync-result.err{display:block; background:#fee2e2; color:#b91c1c;}
+.close-x{
+  position:absolute; top:14px; right:16px; background:transparent; border:none;
+  font-size:22px; color:var(--sub); cursor:pointer; line-height:1;
+}
+.toast{
+  position:fixed; left:50%; bottom:30px; transform:translateX(-50%);
+  background:#0f172a; color:#fff; font-size:13px; padding:10px 18px; border-radius:99px;
+  opacity:0; pointer-events:none; transition:opacity .25s; z-index:99; max-width:86%; text-align:center;
+}
+.toast.show{opacity:1;}
+
+/* footer buttons */
+.fab-wrap{
+  position:fixed; left:0; right:0; bottom:0; z-index:25;
+  display:flex; gap:10px; justify-content:center; padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent, rgba(15,23,42,.92) 38%);
+}
+.fab{
+  border:none; border-radius:14px; padding:12px 18px; font-size:14px; font-weight:700; cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+.fab-add{background:#2563eb; color:#fff;}
+.fab-sync{background:#f8fafc; color:#0f172a;}
+.fab-both{background:#dcfce7; color:#14532d;}
+main{padding-bottom:86px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-badge">vL</div>
+      <div>
+        <h1>旧金山 vLLM 大会 · 旅行清单</h1>
+        <div class="sub">8.22 上海出发 → 8.29 返程</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-row"><span>整体完成度</span><span id="progressText">0 / 0</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="date-strip" id="dateStrip"></div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+
+  <main id="main"></main>
+
+  <div class="fab-wrap">
+    <button class="fab fab-add" id="fabAdd">＋ 添加条目</button>
+    <button class="fab fab-sync" id="fabSync">⇄ 同步</button>
+    <button class="fab fab-both" id="fabBoth">☰ 全部清单</button>
+  </div>
+</div>
+
+<!-- 添加条目 sheet -->
+<div class="sheet-mask" id="maskAdd">
+  <div class="sheet">
+    <h3>添加条目</h3>
+    <div class="add-form">
+      <div class="add-row">
+        <input id="newText" placeholder="要准备什么？如：EVUS 更新" maxlength="80">
+        <select id="newCat"></select>
+      </div>
+      <div class="add-row">
+        <input class="note-input" id="newNote" placeholder="备注（可选，如：8.20 前完成）" maxlength="160">
+      </div>
+      <div class="add-row triple">
+        <input id="newSubcat" list="subcatList" placeholder="子分类（如：景点/美食）" maxlength="20">
+        <select id="newDay">
+          <option value="">不指定日期</option>
+          <option value="0">8.22 出发</option>
+          <option value="1">8.23 调整</option>
+          <option value="2">8.24 Day0</option>
+          <option value="3">8.25 Day1</option>
+          <option value="4">8.26 Day2</option>
+          <option value="5">8.27 游玩</option>
+          <option value="6">8.28 购物</option>
+          <option value="7">8.29 返程</option>
+        </select>
+      </div>
+      <div class="add-row">
+        <select id="newOwner">
+          <option value="me">我编辑</option>
+          <option value="other">她编辑</option>
+        </select>
+        <button class="btn btn-primary" id="btnAdd">添加</button>
+      </div>
+    </div>
+    <datalist id="subcatList">
+      <option value="景点"></option>
+      <option value="美食"></option>
+      <option value="咖啡"></option>
+      <option value="购物"></option>
+      <option value="会议"></option>
+      <option value="社交"></option>
+      <option value="行程"></option>
+      <option value="生活"></option>
+    </datalist>
+  </div>
+</div>
+
+<!-- 同步 sheet -->
+<div class="sheet-mask" id="maskSync">
+  <div class="sheet">
+    <h3>双人同步</h3>
+    <div class="hint">
+      你和她各自在手机上勾选/添加/修改后，点「复制数据」发给对方；对方打开此页点「粘贴合并」。
+      合并后双方的条目、勾选状态和<b>改动记录</b>都会保留，打开「最近改动」即可看到对方改了哪些内容。
+      建议出发前和每天睡前各同步一次。
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btnCopy">复制数据</button>
+      <button class="btn btn-ghost" id="btnFile">保存为文件</button>
+    </div>
+    <textarea id="pasteBox" placeholder="粘贴对方发来的数据文本…"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btnPaste">粘贴合并</button>
+      <button class="btn btn-ghost" id="btnReset">清空本机数据</button>
+    </div>
+    <div class="sync-result" id="syncResult"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ============================================================
+ * 数据模型
+ * item = { id, cat, text, note, done, owner: "me"|"other"|"both",
+ *          addedBy: "me"|"other"|null, updatedAt }
+ * ============================================================ */
+
+const CATS = [
+  { key:"day",     label:"每日行程", icon:"📅" },
+  { key:"trip",    label:"行前事务", icon:"✈️" },
+  { key:"conf",    label:"会议准备", icon:"🎤" },
+  { key:"life",    label:"个人生活", icon:"🧳" },
+  { key:"gift",    label:"伴手礼",   icon:"🎁" },
+  { key:"play",    label:"打卡/美食", icon:"🗺️" },
+  { key:"shop",    label:"购物清单", icon:"🛍️" },
+  { key:"custom",  label:"自定义",   icon:"📌" }
+];
+
+const DAYS = [
+  { d:"8.22", label:"上海出发", tip:"12:30 起飞，提前 3 小时到机场" },
+  { d:"8.23", label:"抵达调整", tip:"倒时差、熟悉场地/交通" },
+  { d:"8.24", label:"大会 Day0", tip:"Training Day · 8:00 注册" },
+  { d:"8.25", label:"大会 Day1", tip:"Keynotes＋分会场＋After Party" },
+  { d:"8.26", label:"大会 Day2", tip:"Keynotes＋分会场，18:00 结束" },
+  { d:"8.27", label:"旧金山机动", tip:"观光 / 访友 / 处理采购" },
+  { d:"8.28", label:"旧金山机动", tip:"打包、确认返程值机" },
+  { d:"8.29", label:"返程", tip:"12:00 起飞，8:30 前出发去机场" }
+];
+
+/* 默认条目：按板块预置，全部可删可改
+ * 条目格式：[text, note, owner, subcat?, day?]
+ * day: 0=8.22 … 7=8.29 */
+const SEED = {
+  trip: [
+    ["护照有效期 > 6 个月", "确认签证页与有效期", "me"],
+    ["美国签证（B1/B2）", "如需面签尽早约；已持有则确认 EVUS 最新状态", "me"],
+    ["EVUS 登记更新", "赴美前需更新，通常几小时内出结果", "me"],
+    ["往返机票出票", "8.22 上海→SFO / 8.29 返程，确认行李额", "me"],
+    ["酒店预订确认", "三选一（见下方推荐）；打印/截图确认单", "me"],
+    ["候选① Marriott Marquis（会场同酒店）", "780 Mission St；大会就在楼下，省通勤；预算内（约 $280-420/晚）；干净、服务稳定，缺点是大而商务", "me", "酒店"],
+    ["候选② Palace Hotel（华尔道夫旗下）", "2 New Montgomery St；复古奢华、服务口碑好，步行到会场 10 分钟、Union Square 5 分钟；预算略紧，淡旺季价差大", "me", "酒店"],
+    ["候选③ Hotel Nikko（日航）", "222 Mason St；评分 9.2/10、性价比高、卫生好、离 Union Square 近；约 $230-330/晚，最稳的预算内选择", "me", "酒店"],
+    ["旅行保险", "含医疗＋航班延误，买后保存保单号", "me"],
+    ["手机国际漫游 / eSIM", "确认开通美国流量套餐；保存客服电话", "me"],
+    ["美元现金＋信用卡", "少量现金即可；带 Visa/Master 双币卡并告知银行出境", "me"],
+    ["充电转接头", "美国 A/B 型插座，带 2 个以上", "me"],
+    ["海关申报准备", "确认可携带物品、随身行李液体规定", "me"]
+  ],
+  conf: [
+    ["大会门票 / 注册确认", "vLLM Conference 与 Ray Summit 同场，8.24–26", "me"],
+    ["会场地址确认", "San Francisco Marriott Marquis，780 Mission St", "me"],
+    ["笔记本＋充电器", "提前装好环境、备好离线资料", "me"],
+    ["演示/代码环境可用", "GPU 资源、跑通 demo，备 fallback 录屏", "me"],
+    ["名片 / 电子名片", "数量按日均 20 张准备", "me"],
+    ["GitHub / 项目简介", "想聊的话题、star 数、链接整理成一页", "me"],
+    ["想听的议程清单", "从官方 agenda 选 5–8 场，标时间地点", "me"],
+    ["与维护者交流的问题清单", "提前写 3–5 个高质量问题", "me"],
+    ["参会着装", "商务休闲即可，会场空调冷，备薄外套", "me"],
+    ["会后 After Party 准备", "8.25 晚，备宽松社交话题", "me"]
+  ],
+  life: [
+    ["旧金山天气与衣物", "8 月底 15–22℃，早晚凉常有雾：薄外套/卫衣", "me"],
+    ["舒适步行鞋", "会展加市区步行量大", "me"],
+    ["常备药品", "感冒药、肠胃药、过敏药、个人处方药", "me"],
+    ["洗漱用品小样", "酒店有基础，自备个人习惯用品", "me"],
+    ["墨镜/防晒", "白天紫外线强", "me"],
+    ["颈枕＋眼罩", "长途飞行用", "me"],
+    ["移动电源", "2 万毫安内可上飞机，放随身行李", "me"],
+    ["数据线×2", "手机、充电宝各一，备充电头", "me"],
+    ["纸质/电子行程单", "出入境与酒店可能查验", "me"],
+    ["紧急联系人清单", "家人电话、使领馆电话、酒店前台", "me"]
+  ],
+  gift: [
+    ["伴手礼整体思路", "轻、小、不占托运行李、有纪念性优先；避免肉类/植物类制品", "me"],
+    ["保健品①：关节（Move Free 氨糖）", "红瓶/绿瓶/蓝瓶按年龄段选，Costco 最便宜", "me", "保健品"],
+    ["保健品②：鱼油/Omega-3", "挑高 EPA/DHA 含量（如 1000mg+），Kirkland/Nature Made 均可", "me", "保健品"],
+    ["保健品③：复合维生素/钙", "Centrum 银发版（给爸妈）、钙+D3、维生素 C 泡腾片", "me", "保健品"],
+    ["保健品④：心脑类", "辅酶 Q10（保护心脏）、银杏、大蒜素、纳豆激酶", "me", "保健品"],
+    ["保健品⑤：眼/睡眠", "叶黄素（护眼）、褪黑素（助眠，注意剂量）、镁片", "me", "保健品"],
+    ["保健品⑥：肠胃/免疫", "益生菌（Culturelle 口碑好）、消化酶、锌/维 C 组合", "me", "保健品"],
+    ["保健品购买要点", "认准 US Pharmacopeia 等认证；买完拍照成分表；Costco 买大瓶装最划算", "me", "保健品"],
+    ["爸妈：舒适衣物", "Sketchers/New Balance 运动鞋（比国内便宜 30%+）、保暖袜、外套；美国码偏大，按国内码换算", "me"],
+    ["姐姐姐夫：美妆护肤", "倩碧/雅诗兰黛/兰蔻套装，或单瓶精华；盒装礼品套装更划算", "me"],
+    ["姐姐姐夫：小家电/家居", "Vitamix/Instant Pot 可考虑但重；轻便选 KitchenAid 小件、铸铁锅", "me"],
+    ["朋友（25-35）：小而精", "口红/香水小样、巧克力、咖啡豆、冰箱贴、帆布包，人均 1 份", "me"],
+    ["同事：零食/伴手礼", "See's Candies、Trader Joe's 零食、咖啡豆；按部门人数备", "me"],
+    ["7 岁男孩：玩具", "LEGO 套装（美国常打折）、乐高小人仔、国家公园主题玩具", "me"],
+    ["13 岁女孩（手球）：运动装备", "Nike/Under Armour 训练服、运动护具、手球手套（体育用品店找）", "me"],
+    ["13 岁男孩（摩托）：酷物", "摩托主题 T 恤/贴纸、Hot Wheels 模型、棒球帽", "me"],
+    ["经典耐用礼物（Gucci 围巾/钱包、经典香、护肤套装）", "适合女朋友或其他重要的人：Gucci 羊毛围巾/GG Marmont 钱包（美国比国内便宜 20-30%，部分州可退消费税）、Chanel No.5 / Miss Dior 经典香、雅诗兰黛小棕瓶套装（美国原产国价格最优）；美国买比国内专柜划算", "me", "经典礼物"],
+    ["经典礼物购买渠道", "Gucci 去 Neiman Marcus/百货专柜或机场免税比价；香氛和护肤买百货套装或机场免税，注意比价后再买", "me", "经典礼物"],
+    ["自己：威士忌", "美国波本（Buffalo Trace/Blanton's）、加州单一麦芽；中国入境限 1500ml/人（约 2 瓶），购前查最新规定", "me"],
+    ["美国本土值得买的小东西", "Bose（耳机美国本土价+常打折）、Levi's 牛仔裤（美国本土版型）、See's Candies、Ghirardelli 巧克力、Trader Joe's 零食/帆布袋、Sightglass 咖啡豆、Allbirds 羊毛鞋（旧金山起家）", "me", "本土好物"],
+    ["托运与海关限制", "食品如实申报；肉类、植物、种子禁带；购物小票保留便于申报", "me"],
+    ["送礼清单与对象", "出发前列好每人送什么，避免漏送或重复", "me"]
+  ],
+  custom: [],
+
+  /* 每日行程：day 0=8.22 … 7=8.29 */
+  day: [
+    ["提前网上值机", "12:30 起飞，选座、确认行李额", "me", "行程", 0],
+    ["随身行李准备", "充电宝、电脑、颈枕、证件放随身包", "me", "行程", 0],
+    ["出发前往机场", "12:30 起飞 → 9:30 前到机场，预留值机安检时间", "me", "行程", 0],
+    ["飞机上调整作息", "按旧金山时间睡/醒，减少时差", "me", "行程", 0],
+
+    ["到达后酒店入住", "确认房型与退房时间，放下行李", "me", "住宿", 1],
+    ["买水/零食/日用品", "CVS/Walgreens 或附近超市", "me", "生活", 1],
+    ["倒时差散步", "在酒店周边 SoMa 走走，不安排重行程", "me", "观光", 1],
+    ["熟悉会场动线", "Marriott Marquis（780 Mission St）踩点，确认注册口", "me", "会议", 1],
+    ["提前吃顿好的", "正式晚宴预热，选一家想去的餐厅", "me", "美食", 1],
+    ["睡前过一遍明天议程", "8.24 Training Day，8:00 注册，选好工作坊", "me", "会议", 1],
+
+    ["8:00 到达注册", "拿胸牌、会议资料，存包", "me", "会议", 2],
+    ["参加 Training Day 工作坊", "9:00-12:00 / 13:00-16:00，选分布式推理/LLM 方向", "me", "会议", 2],
+    ["午间社交", "12:00-13:00 午饭时间，主动认识 3-5 人", "me", "社交", 2],
+    ["晚上放松", "会议第一天不排游玩，早点休息", "me", "生活", 2],
+
+    ["参加 Keynotes", "9:30 开始，提前 10 分钟到场", "me", "会议", 3],
+    ["分会场按议程打卡", "12:30-17:30，优先 vLLM 相关场次", "me", "会议", 3],
+    ["跟维护者/同行聊", "带着问题清单，别只拍照", "me", "社交", 3],
+    ["Ray After Party", "17:30-19:00，社交为主，适量饮酒", "me", "社交", 3],
+
+    ["Keynotes 收尾场", "9:30-11:30", "me", "会议", 4],
+    ["最后的分会场/交流", "12:30-17:30，补聊没来得及见的人", "me", "会议", 4],
+    ["18:00 大会结束", "拍个合影，存好加的联系方式", "me", "会议", 4],
+    ["晚上自由活动", "轻松晚餐或早点休息，为明天游玩攒体力", "me", "生活", 4],
+
+    ["金门大桥（Golden Gate Bridge）", "建议上午，风大带外套；可租自行车过桥", "me", "景点", 5],
+    ["渔人码头 + Pier 39", "看海狮、吃酸面包蛤蜊汤（Boudin）", "me", "景点", 5],
+    ["恶魔岛 Alcatraz（如订到票）", "旺季票紧张，提前订；没票可改看海湾巡游", "me", "景点", 5],
+    ["九曲花街 + 铛铛车", "Lombard Street 拍照，Cable Car 体验一次", "me", "景点", 5],
+    ["金门公园（Golden Gate Park）", "Japanese Tea Garden、温室花房顺路逛", "me", "景点", 5],
+    ["打卡一家咖啡店", "Sightglass / Blue Bottle / Ritual 三选一", "me", "咖啡", 5],
+    ["晚餐：海鲜/牛排", "Swan Oyster Depot（要排队）或 House of Prime Rib（需预约）", "me", "美食", 5],
+
+    ["Union Square 商圈采购", "梅西、苹果旗舰店、周边百货，先列清单再逛", "me", "购物", 6],
+    ["SF Premium Outlets（如租车）", "在 Livermore，距市区 40 英里，适合买鞋服箱包；不租车可去 Great Mall（BART 可达）", "me", "购物", 6],
+    ["Costco 市区店采购", "450 10th St；国内会员卡直接进，买保健品/零食/咖啡豆；或去 Union Square 附近 Whole Foods 补零食", "me", "购物", 6],
+    ["伴手礼集中采购", "按送礼清单逐人核对，拍照留底", "me", "购物", 6],
+    ["给自己买威士忌", "Total Wine 或市区酒行挑 1-2 瓶，注意 1500ml 限额", "me", "购物", 6],
+    ["打包＋称重", "确认托运限重，贵重/液体放托运或按规定随身", "me", "生活", 6],
+    ["确认返程航班", "网上值机、机场交通、到沪时间", "me", "行程", 6],
+
+    ["酒店退房", "留好时间，别误机", "me", "行程", 7],
+    ["提前 3 小时到 SFO", "12:00 起飞 → 9:00 前到；市区出发建议 8:00-8:30 出门", "me", "行程", 7],
+    ["免税店补漏", "机场免税买酒/巧克力补充，注意总额度", "me", "购物", 7],
+    ["落地后报平安", "回国后按清单分送礼", "me", "生活", 7]
+  ],
+
+  /* 打卡 / 美食 / 咖啡：subcat 区分，day 可空（表示任选时间） */
+  play: [
+    ["Alcatraz 恶魔岛", "需提前订票（8 月旺季 4-8 周前最佳）；订不到就改海湾巡游", "me", "景点", 5],
+    ["金门大桥观景点", "Battery Spencer / Fort Point / 桥上步道", "me", "景点", 5],
+    ["渔人码头 + Pier 39", "海狮、酸面包、Crab Sandwich", "me", "景点", 5],
+    ["九曲花街（Lombard St）", "8 月花季，早上人少", "me", "景点", 5],
+    ["铛铛车 Cable Car", "Union Square ↔ Fisherman's Wharf 段最经典", "me", "景点", 5],
+    ["金门公园", "日式茶庭园、温室花房、风车", "me", "景点", 5],
+    ["Palace of Fine Arts", "拍照好看，傍晚光线佳", "me", "景点", 5],
+    ["Alamo Square（Painted Ladies）", "《欢乐满屋》经典机位", "me", "景点", 5],
+    ["Ferry Building 农贸市场", "周二/四/六有市集，吃生蚝、买橄榄油", "me", "景点", 5],
+    ["Salesforce Park 空中花园", "Transit Center 楼顶，SoMa 附近顺路", "me", "景点", 5],
+    ["Mission District 涂鸦街", "Clarion Alley + 墨西哥卷饼", "me", "景点", 5],
+    ["双子峰 Twin Peaks 看全景", "傍晚看日落与城市灯光", "me", "景点", 5],
+    ["Sightglass Coffee（SoMa）", "270 7th St，工业风自烘焙，离会场近；豆子可买回家，袋装适合送人", "me", "咖啡", 5],
+    ["Blue Bottle Coffee", "发源于湾区的手冲代表，市区多家分店；买豆子认准烘焙日期", "me", "咖啡", 5],
+    ["Ritual Coffee Roasters", "教会区老牌精品咖啡，单品豆选择多", "me", "咖啡", 5],
+    ["Andytown Coffee Roasters", "日落区，招牌 Snowy Plover（雪糕咖啡），海景加分", "me", "咖啡", 5],
+    ["Four Barrel Coffee", "Mission 区老牌烘焙，工业风空间，豆子品质稳定", "me", "咖啡", 5],
+    ["Philz Coffee", "旧金山本地连锁，招牌 Philharmonic 深烘混合，风格浓郁", "me", "咖啡", 5],
+    ["咖啡伴手礼：带豆子回国", "Sightglass/Blue Bottle 袋装豆（200-340g 轻便），标注烘焙日期，送同事朋友有面子；密封防潮，入境食品类如实申报", "me", "咖啡", 6],
+    ["咖啡用具小件", "Hario/Kalita 手冲壶、滤杯、随行杯；美国本地品牌如 Fellow 品类更全", "me", "咖啡", 6],
+    ["Tartine Bakery", "旧金山面包天花板，可颂/酸面包", "me", "美食", 5],
+    ["Swan Oyster Depot", "生蚝海鲜老店，做好排队准备", "me", "美食", 5],
+    ["House of Prime Rib", "经典牛排馆，需预约", "me", "美食", 5],
+    ["Boudin Bakery", "渔人码头酸面包创始店，蛤蜊浓汤配酸面包", "me", "美食", 5],
+    ["Tony's Pizza Napoletana", "北滩披萨名店，获奖款值得一试", "me", "美食", 5],
+    ["州府街晚餐/夜宵", "SoMa 与教会区之间，各国料理聚集", "me", "美食", 5]
+  ],
+
+  /* 购物：写明地点与值得买的东西 */
+  shop: [
+    ["Union Square 商圈", "梅西百货（化妆品/衣服）、苹果旗舰店（比国行便宜，无锁版）、Bose 旗舰店/电器店（QC 系列本土价）、各品牌旗舰店", "me", "购物", 6],
+    ["SF Premium Outlets（Livermore）", "车程约 1 小时，适合买鞋服包箱：Nike/Adidas、Coach、Levi's、Tommy、Polo；先上官网看当日折扣", "me", "购物", 6],
+    ["Great Mall（Milpitas）", "BART 可达的室内折扣商场，规模小于 Livermore，胜在交通方便", "me", "购物", 6],
+    ["Costco 进入步骤（市区店 450 10th St）", "①有国内开市客会员卡（¥299/年）：下载开市客 App 出示电子会员码，或用实体卡，在门口扫码进入；结账出示会员卡，可刷 Visa/Master/银联信用卡。②没有卡：先在门口办美国会员（约 $60/年），当场就能进；短期来美用完可取消。③注意：美国官网线上购物不支持中国卡，实体店不受影响", "me", "购物", 6],
+    ["Walgreens / CVS", "药妆店：开架护肤品（Cerave、Neutrogena）、维生素、小零食，顺路补货", "me", "购物", 6],
+    ["Levi's 旗舰店", "美国本土品牌，牛仔裤版型全、常打折；Union Square 有店", "me", "购物", 6],
+    ["Apple Store", "iPhone/Mac/耳机比国内便宜（汇率+税差），注意美版无锁与保修政策", "me", "购物", 6],
+    ["电子产品", "SSD 移动硬盘、键鼠、戴森小电器，美国价格通常更低，比价后买", "me", "购物", 6],
+    ["运动品牌（Nike/UA）", "球鞋、训练服、运动装备，奥特莱斯折扣力度大", "me", "购物", 6],
+    ["保健品统一采购点", "Costco 最便宜，其次 Target/CVS；认准含量与品牌，别买杂牌", "me", "购物", 6],
+    ["威士忌/葡萄酒", "Total Wine 品类最全，或机场免税买；中国入境限 1500ml/人，2 瓶内", "me", "购物", 6],
+    ["Bose 耳机/音箱", "美国本土品牌，本土价+常打折，QC/Ultra 系列适合送人或自用；Best Buy/机场免税比价", "me", "购物", 6],
+    ["Allbirds 羊毛鞋", "旧金山起家的舒适鞋品牌，美国买价格最好；自用或送人都合适", "me", "购物", 6],
+    ["机场免税店", "酒类、巧克力、化妆品补漏；注意全球免税额度", "me", "购物", 7]
+  ]
+};
+
+/* ============================================================
+ * 状态
+ * ============================================================ */
+const LOG_KEY = "vllm_trip_log_v1";
+const SEED_KEY = "vllm_trip_seed_v1";
+const SEED_V = 5;   // 种子数据版本：每次更新预置内容 +1，旧数据自动合并刷新
+function loadLog(){
+  try{
+    const raw = localStorage.getItem(LOG_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return [];
+}
+function saveLog(arr){
+  try{ localStorage.setItem(LOG_KEY, JSON.stringify(arr.slice(0,300))); }catch(e){}
+}
+
+function logChange(item, action, who){
+  const log = loadLog();
+  log.unshift({
+    at: Date.now(), who: who||"me", action, cat: item.cat,
+    text: item.text, subcat: item.subcat||"", day: item.day,
+    id: item.id
+  });
+  saveLog(log);
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem("vllm_trip_v2");
+    if(raw){
+      const arr = JSON.parse(raw);
+      if(Array.isArray(arr) && arr.length){
+        return migrateSeed(arr);
+      }
+    }
+  }catch(e){}
+  const arr = buildSeed();
+  try{ localStorage.setItem("vllm_trip_v2", JSON.stringify(arr)); }catch(e){}
+  return arr;
+}
+
+function buildSeed(){
+  const arr = [];
+  for(const c of CATS){
+    for(const [text,note,owner,subcat,day] of (SEED[c.key]||[])){
+      arr.push({
+        id: uid(), cat:c.key, text, note: note||"", done:false,
+        owner: owner||"me", addedBy:null, updatedAt:Date.now(),
+        subcat: subcat||"", day: (day===undefined ? null : day)
+      });
+    }
+  }
+  return arr;
+}
+
+function migrateSeed(stored){
+  let storedV = 0;
+  try{ storedV = parseInt(localStorage.getItem(SEED_KEY),10) || 0; }catch(e){}
+  if(storedV >= SEED_V) return stored;
+  /* 种子更新过：用新种子重建清单。旧数据里已被删掉的预置条目（如旧的"女朋友"分类）会一并移除；
+   * 勾选状态无法跨版本保留（规划阶段影响很小），同步给另一台手机后对方也走同样更新。 */
+  const fresh = buildSeed();
+  const kept = fresh;
+  try{ localStorage.setItem(SEED_KEY, String(SEED_V)); }catch(e){}
+  try{ localStorage.setItem("vllm_trip_v2", JSON.stringify(kept)); }catch(e){}
+  return kept;
+}
+
+function save(arr){
+  if(arr) items = arr;
+  try{ localStorage.setItem("vllm_trip_v2", JSON.stringify(items)); }catch(e){}
+}
+
+let items = load();
+let activeCat = "all";
+let ownerFilter = "all";
+let activeDay = null;
+let editorWho = "me";
+
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+/* ============================================================
+ * 渲染
+ * ============================================================ */
+function catName(key){
+  const c = CATS.find(x=>x.key===key);
+  return c ? c.label : key;
+}
+
+function ownerName(o){
+  return o==="me" ? "我改" : "她改";
+}
+
+function renderTabs(){
+  const el = document.getElementById("tabs");
+  const counts = {};
+  for(const it of items){ counts[it.cat] = (counts[it.cat]||0)+1; }
+  let html = `<button class="tab ${activeCat==="log"?"active":""}" data-cat="log">🕘 最近改动</button>
+    <button class="tab ${activeCat==="all"?"active":""}" data-cat="all">全部<span class="n">${items.length}</span></button>`;
+  for(const c of CATS){
+    html += `<button class="tab ${activeCat===c.key?"active":""}" data-cat="${c.key}">${c.icon}${c.label}<span class="n">${counts[c.key]||0}</span></button>`;
+  }
+  el.innerHTML = html;
+  el.querySelectorAll(".tab").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      activeCat = b.dataset.cat;
+      renderTabs(); renderMain();
+    });
+  });
+}
+
+function renderDates(){
+  const strip = document.getElementById("dateStrip");
+  strip.innerHTML = DAYS.map((d,i)=>{
+    const cls = i===2||i===3||i===4 ? "hl" : "travel";
+    return `<span class="date-chip ${cls}">${d.d} ${d.label}</span>`;
+  }).join("");
+}
+
+function renderProgress(){
+  const done = items.filter(i=>i.done).length;
+  document.getElementById("progressText").textContent = `${done} / ${items.length} 已完成`;
+  document.getElementById("progressFill").style.width =
+    items.length ? Math.round(done/items.length*100)+"%" : "0%";
+}
+
+function filtered(){
+  let list = items.slice();
+  if(activeCat!=="all") list = list.filter(i=>i.cat===activeCat);
+  if(ownerFilter==="me") list = list.filter(i=>i.owner==="me"||i.owner==="both");
+  if(ownerFilter==="other") list = list.filter(i=>i.owner==="other"||i.owner==="both");
+  return list;
+}
+
+function itemHtml(it){
+  const chips = [];
+  if(it.owner==="other") chips.push(`<span class="tag hertag">她改</span>`);
+  if(it.subcat) chips.push(`<span class="tag sub">${esc(it.subcat)}</span>`);
+  if(it.day!==null && it.day!==undefined && DAYS[it.day]) chips.push(`<span class="tag daychip">${DAYS[it.day].d}</span>`);
+  return `
+    <div class="item ${it.done?"done":""}" data-id="${it.id}">
+      <div class="box ${it.done?"on":""}" data-act="toggle"></div>
+      <div class="item-body">
+        <div class="item-text">${esc(it.text)}</div>
+        ${it.note?`<div class="item-note">${esc(it.note)}</div>`:""}
+        <div class="meta">
+          <span class="tag">${catName(it.cat)}</span>
+          ${chips.join("")}
+        </div>
+      </div>
+      <div class="item-ops">
+        <button class="op" data-act="edit">改</button>
+        <button class="op" data-act="del">删</button>
+      </div>
+    </div>`;
+}
+
+function renderMain(){
+  const main = document.getElementById("main");
+
+  /* 最近改动：双方共同编辑的改动时间线 */
+  if(activeCat==="log"){
+    const log = loadLog();
+    const ACTION = {add:"＋ 添加", done:"✓ 勾选", undone:"↩ 取消勾选", edit:"✎ 修改", delete:"× 删除"};
+    const whoTxt = e=>e.who==="me" ? "我" : "她";
+    let html = `<div class="hint-note">这里按时间倒序显示你和她对清单做的所有改动；每次同步后对方的改动也会出现在这里。</div>
+      <div class="card">`;
+    if(!log.length){
+      html += `<div class="empty">还没有改动记录。勾选、添加、修改条目后会自动记录。</div>`;
+    }else{
+      html += log.slice(0,60).map(e=>{
+        const t = new Date(e.at);
+        const time = `${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")} ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`;
+        const dayTxt = (e.day!==null && e.day!==undefined && DAYS[e.day]) ? ` · ${DAYS[e.day].d}` : "";
+        const subTxt = e.subcat ? ` [${esc(e.subcat)}]` : "";
+        return `<div class="log-item">
+          <span class="log-badge ${e.who==="me"?"me":"her"}">${whoTxt(e)}</span>
+          <div class="log-body">
+            <div class="log-text"><b>${ACTION[e.action]||e.action}</b> ${esc(e.text)}${subTxt}${dayTxt}</div>
+            <div class="log-time">${time} · ${catName(e.cat)}</div>
+          </div>
+        </div>`;
+      }).join("");
+    }
+    html += `</div>`;
+    main.innerHTML = html;
+    return;
+  }
+
+  /* 每日行程：按天分块展示 */
+  if(activeCat==="day"){
+    let html = `
+      <div class="day-selector" id="daySelector"></div>
+      <div class="hint-note">按天查看当日待办；「打卡/美食」「购物清单」里有候选清单，可把心动条目改到对应日期。</div>`;
+    const showAll = activeDay===null;
+    const daysToShow = showAll ? DAYS.map((_,i)=>i) : [activeDay];
+    for(const di of daysToShow){
+      const dayItems = items.filter(i=>i.day===di && (ownerFilter==="all" ? true : (ownerFilter==="me" ? i.owner==="me" : i.owner==="other")));
+      html += `<div class="section-title">${DAYS[di].d} ${DAYS[di].label}<span class="day-tip">${DAYS[di].tip}</span></div>
+        <div class="card">${dayItems.length ? dayItems.map(itemHtml).join("") : `<div class="empty">这一天还没有安排，点下方「添加条目」补充</div>`}</div>`;
+    }
+    main.innerHTML = html;
+    const sel = document.getElementById("daySelector");
+    sel.innerHTML = `<button class="dbtn ${showAll?"active":""}" data-day="">全部</button>` +
+      DAYS.map((d,i)=>`<button class="dbtn ${activeDay===i?"active":""}" data-day="${i}">${d.d}</button>`).join("");
+    sel.querySelectorAll(".dbtn").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        activeDay = b.dataset.day==="" ? null : parseInt(b.dataset.day,10);
+        renderMain();
+      });
+    });
+  }else{
+    const list = filtered();
+    let html = `
+      <div class="filters">
+        <button class="fbtn ${ownerFilter==="all"?"active":""}" data-owner="all">全部</button>
+        <button class="fbtn ${ownerFilter==="me"?"active":""}" data-owner="me">我改的</button>
+        <button class="fbtn ${ownerFilter==="other"?"active":""}" data-owner="other">她改的</button>
+      </div>
+      <div class="card">`;
+    if(!list.length){
+      html += `<div class="empty">这个分类还没有条目，点下方「添加条目」补充</div>`;
+    }else{
+      html += list.map(itemHtml).join("");
+    }
+    html += `</div>`;
+    main.innerHTML = html;
+    main.querySelectorAll(".fbtn").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        ownerFilter = b.dataset.owner;
+        renderMain();
+      });
+    });
+  }
+
+  main.querySelectorAll("[data-id]").forEach(row=>{
+    const id = row.dataset.id;
+    row.querySelectorAll("[data-act]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const act = btn.dataset.act;
+        if(act==="toggle") toggle(id);
+        else if(act==="del") delItem(id);
+        else if(act==="edit") editItem(id);
+      });
+    });
+  });
+}
+
+function toggle(id){
+  const it = items.find(x=>x.id===id);
+  if(it){
+    it.done = !it.done; it.updatedAt = Date.now();
+    logChange(it, it.done?"done":"undone", editorWho);
+    save(items); renderAll();
+  }
+}
+
+function delItem(id){
+  const it = items.find(x=>x.id===id);
+  if(!it) return;
+  if(!confirm(`删除「${it.text}」？`)) return;
+  logChange(it, "delete", editorWho);
+  save(items.filter(x=>x.id!==id));
+  renderAll();
+}
+
+function editItem(id){
+  const it = items.find(x=>x.id===id);
+  if(!it) return;
+  const text = prompt("条目内容：", it.text);
+  if(text===null) return;
+  const note = prompt("备注（留空可清除）：", it.note) || "";
+  it.text = text.trim() || it.text;
+  it.note = note.trim();
+  it.updatedAt = Date.now();
+  logChange(it, "edit", editorWho);
+  save(items);
+  renderAll();
+}
+
+function renderAll(){
+  renderProgress();
+  renderTabs();
+  renderMain();
+}
+
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+/* ============================================================
+ * 添加
+ * ============================================================ */
+function fillCatSelect(){
+  const sel = document.getElementById("newCat");
+  sel.innerHTML = CATS.filter(c=>c.key!=="custom" && c.key!=="day").map(c=>`<option value="${c.key}">${c.icon} ${c.label}</option>`).join("");
+}
+
+function openAdd(){
+  fillCatSelect();
+  document.getElementById("newText").value = "";
+  document.getElementById("newNote").value = "";
+  document.getElementById("newSubcat").value = "";
+  document.getElementById("newDay").value = (activeCat==="day" && activeDay!==null) ? String(activeDay) : "";
+  document.getElementById("maskAdd").style.display = "flex";
+  setTimeout(()=>document.getElementById("newText").focus(), 60);
+}
+
+function submitAdd(){
+  const text = document.getElementById("newText").value.trim();
+  const note = document.getElementById("newNote").value.trim();
+  const cat = document.getElementById("newCat").value;
+  const owner = document.getElementById("newOwner").value;
+  const subcat = document.getElementById("newSubcat").value.trim();
+  const dayRaw = document.getElementById("newDay").value;
+  const day = dayRaw==="" ? null : parseInt(dayRaw,10);
+  editorWho = document.getElementById("newOwner").value;
+  if(!text){ toast("请填写内容"); return; }
+  items.push({ id:uid(), cat, text, note, done:false, owner, addedBy:null, updatedAt:Date.now(), subcat, day });
+  logChange(items[items.length-1], "add", editorWho);
+  save(items);
+  document.getElementById("maskAdd").style.display = "none";
+  activeCat = cat;
+  activeDay = null;
+  renderAll();
+  toast("已添加 ✓");
+}
+
+/* ============================================================
+ * 同步：压缩 JSON → 文本，支持合并
+ * ============================================================ */
+function pack(){
+  const payload = {
+    app:"vllm-trip", v:2,
+    exportedAt: new Date().toISOString(),
+    items,
+    log: loadLog()
+  };
+  try{
+    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  }catch(e){
+    return JSON.stringify(payload);
+  }
+}
+
+function unpack(s){
+  s = (s||"").trim();
+  if(!s) throw new Error("没有可合并的数据");
+  let payload;
+  try{
+    payload = JSON.parse(decodeURIComponent(escape(atob(s))));
+  }catch(e){
+    payload = JSON.parse(s);
+  }
+  if(payload.app!=="vllm-trip" || !Array.isArray(payload.items)){
+    throw new Error("数据格式不正确");
+  }
+  window.__lastIncomingLog = Array.isArray(payload.log) ? payload.log : [];
+  return payload.items;
+}
+
+function mergeIn(incoming){
+  const map = new Map(items.map(i=>[i.id,i]));
+  let added = 0, updated = 0;
+  for(const inc of incoming){
+    if(!inc || !inc.id || !inc.text) continue;
+    const local = map.get(inc.id);
+    if(!local){
+      map.set(inc.id, inc);
+      added++;
+    }else{
+      // 合并勾选：任一为已完成则标记完成；文本/备注以最近更新为准
+      let changed = false;
+      if(inc.done && !local.done){ local.done = true; changed = true; }
+      if(!local.note && inc.note){ local.note = inc.note; changed = true; }
+      if(!local.text && inc.text){ local.text = inc.text; changed = true; }
+      if((inc.updatedAt||0) > (local.updatedAt||0)){
+        if(inc.text) local.text = inc.text;
+        if(inc.note) local.note = inc.note;
+        if(inc.owner) local.owner = inc.owner;
+        if(inc.subcat!==undefined) local.subcat = inc.subcat;
+        if(inc.day!==undefined) local.day = inc.day;
+        local.updatedAt = inc.updatedAt;
+        changed = true;
+      }
+      if(changed) updated++;
+    }
+  }
+  const merged = Array.from(map.values());
+  save(merged);
+  /* 合并对方的改动记录，双方都能看到发生了什么 */
+  const localLog = loadLog();
+  const incomingLog = window.__lastIncomingLog || [];
+  window.__lastIncomingLog = null;
+  const combined = incomingLog.concat(localLog);
+  const seen = new Set();
+  const mergedLog = combined.filter(e=>{
+    const k = e.id+"|"+e.at+"|"+e.action+"|"+e.who;
+    if(seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).sort((a,b)=>b.at-a.at).slice(0,300);
+  saveLog(mergedLog);
+  return { added, updated, logMerged: incomingLog.length };
+}
+
+function copySync(){
+  const text = pack();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    let settled = false;
+    const done = () => {
+      if(settled) return;
+      settled = true;
+      showSyncResult(`已复制（${(text.length/1024).toFixed(1)} KB）。发给对方，让对方打开「同步」粘贴合并。`, true);
+    };
+    const fallback = () => {
+      if(settled) return;
+      settled = true;
+      fallbackCopy(text);
+    };
+    navigator.clipboard.writeText(text).then(done, fallback);
+    setTimeout(fallback, 1500); // 部分浏览器无提示挂起时兜底
+  }else{
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  document.getElementById("pasteBox").value = text;
+  document.getElementById("pasteBox").select();
+  showSyncResult("当前浏览器不支持自动复制，数据已放在下方文本框，请长按手动复制。", true);
+}
+
+function saveFile(){
+  const text = pack();
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `vllm-trip-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  showSyncResult("已生成数据文件，发送给对方后让对方点「粘贴合并」。", true);
+}
+
+function pasteMerge(){
+  const text = document.getElementById("pasteBox").value;
+  try{
+    const incoming = unpack(text);
+    const r = mergeIn(incoming);
+    document.getElementById("pasteBox").value = "";
+    showSyncResult(`合并成功：新增 ${r.added} 条，更新 ${r.updated} 条，收到对方改动记录 ${r.logMerged} 条。点「最近改动」可查看双方改了什么。`, true);
+    renderAll();
+  }catch(e){
+    showSyncResult("合并失败：" + e.message, false);
+  }
+}
+
+function showSyncResult(msg, ok){
+  const el = document.getElementById("syncResult");
+  el.className = "sync-result " + (ok?"ok":"err");
+  el.textContent = msg;
+}
+
+function resetLocal(){
+  if(!confirm("确定清空本机所有数据并恢复默认清单吗？此操作不可撤销（对方手机数据不受影响）。")) return;
+  localStorage.removeItem("vllm_trip_v2");
+  localStorage.removeItem(LOG_KEY);
+  localStorage.removeItem(SEED_KEY);
+  items = load();
+  renderAll();
+  showSyncResult("已清空并恢复默认清单。", true);
+}
+
+/* ============================================================
+ * Toast & 事件绑定
+ * ============================================================ */
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove("show"), 2200);
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  renderDates();
+  renderAll();
+  fillCatSelect();
+
+  document.getElementById("fabAdd").addEventListener("click", openAdd);
+  document.getElementById("fabSync").addEventListener("click", ()=>{
+    document.getElementById("pasteBox").value = "";
+    showSyncResult("", true);
+    document.getElementById("syncResult").className = "sync-result";
+    document.getElementById("maskSync").style.display = "flex";
+  });
+  document.getElementById("fabBoth").addEventListener("click", ()=>{
+    activeCat = "all";
+    ownerFilter = "all";
+    activeDay = null;
+    renderTabs(); renderMain();
+  });
+
+  document.getElementById("btnAdd").addEventListener("click", submitAdd);
+  document.getElementById("newText").addEventListener("keydown", e=>{
+    if(e.key==="Enter") submitAdd();
+  });
+
+  document.getElementById("btnCopy").addEventListener("click", copySync);
+  document.getElementById("btnFile").addEventListener("click", saveFile);
+  document.getElementById("btnPaste").addEventListener("click", pasteMerge);
+  document.getElementById("btnReset").addEventListener("click", resetLocal);
+
+  document.querySelectorAll(".sheet-mask").forEach(mask=>{
+    mask.addEventListener("click", e=>{
+      if(e.target===mask) mask.style.display = "none";
+    });
+  });
+});
+</script>
+</body>
+</html>
